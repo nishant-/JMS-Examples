@@ -1,4 +1,4 @@
-package jms.example;
+package jms.example.requestreply;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 

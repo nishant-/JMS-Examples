@@ -1,11 +1,11 @@
-package jms.example.replytoheader;
+package jms.example.correlationid;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 import javax.naming.InitialContext;
 
-public class ReplyToHeaderExample {
+public class CorrelationIdExample {
 
     public static void main(String[] args) throws Exception {
 
@@ -22,26 +22,32 @@ public class ReplyToHeaderExample {
             JMSProducer requestProducer = jmsContext.createProducer();
             String requestText = "Request message";
             TextMessage requestTextMessage = jmsContext.createTextMessage(requestText);
+
             //set the header - reply Q
             requestTextMessage.setJMSReplyTo(replyQueue);
+
             //send this message to request Q
             requestProducer.send(requestQueue, requestTextMessage);
 
             JMSConsumer requestConsumer = jmsContext.createConsumer(requestQueue);
-            TextMessage requestMessage = (TextMessage) requestConsumer.receive();
+            TextMessage receivedRequestMessage = (TextMessage) requestConsumer.receive();
 
-            System.out.println("Message received = " + requestMessage.getText());
+            System.out.println("Message received = " + receivedRequestMessage.getText());
+            String recvdMsgJMSID = receivedRequestMessage.getJMSMessageID();
+            System.out.println("Received request jms id = " + recvdMsgJMSID);
 
             JMSProducer replyProducer = jmsContext.createProducer();
-            //now get the reply queue name from the request message
-            //no need to specify the destination for the reply message
-            //it is dynamically obtained from the request message replyTo header
-            Destination destinationName = requestMessage.getJMSReplyTo();
-            replyProducer.send(destinationName, "Reply message");
+
+            Destination destinationName = receivedRequestMessage.getJMSReplyTo();
+
+            TextMessage replyTextMessage = jmsContext.createTextMessage("Reply message");
+            replyTextMessage.setJMSCorrelationID(recvdMsgJMSID);
+            replyProducer.send(destinationName, replyTextMessage);
 
             JMSConsumer replyConsumer = jmsContext.createConsumer(destinationName);
-            Message replyMessage = replyConsumer.receive();
+            TextMessage replyMessage = (TextMessage) replyConsumer.receive();
             System.out.println("Message received = " + replyMessage.getBody(String.class));
+            System.out.println("Reply message correlation id " + replyMessage.getJMSCorrelationID());
 
         }
     }
