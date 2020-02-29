@@ -1,0 +1,47 @@
+A Message is used to communicate all the data and events in the JMS world.
+
+A Message has 3 parts
+
+1. Message header
+2. Message Properties
+3. Message Body/Payload
+
+Message headers are meta-data rhat convey something about the message.
+The message headers are divided in 2 categories
+a) Provider set headers. These are set by the JMS provider
+	
+	i)   JMSDestination - the Q or the Topic to which the message should be delivered. This is set by JMS provider like ActiveMQ
+	ii)  JMSDeliveryMode - Can be persistent, non-persistent etc.
+	iii) JMSMessageId - The provider assigns unique id to each jms message.
+	iv)  JMSTimestamp - time at which message was received by the provider.
+	v)   JMSExpiration - set the time after which the message expires.
+	vi)  JMSRedelivered - is set by the provider only when it redelivers a message to a consumer.
+	vii) JMSPriority - Used to prioritise the messages. Priority 0 - 4 - Normal, 5 - 9 - higher priority 
+
+
+b) Developer Set headers
+   
+   i)    JMSReplyTo - Is used by the consumer application to determine the Q or Topic to which it should reply. Used in request reply scenario
+   ii)   JMSCorrelationID - Used in req reply scenario. Consumer application will take the JMSMessageId that comes in the request 
+         and it puts it into the JMSCorrelationID when it sends the response back.
+   iii)  JMSType - Set by the producer application. Conveys what type of JMS message is being sent.
+   
+   
+Message properties
+
+Application Specific properties - Add any name-value pair to jms message using setXXXProperty XXX stands for particular type. String, boolean, int etc.
+To retrive the property on consumer's end use getXXXProperty.
+
+Provider specific properties - generally not touched by developers. Not mandatory for providers to use them.
+Below are some of the provider specific properties
+JMSXUserID
+JMSXAppID
+JMSXProducerTXID
+JMSXConsumerTXID
+JMSXRcvTimestamp
+JMSDeliveryCount
+JMSXState
+JMSXGroupID
+JMSXGroupSeq
+
+JMSXGroupID & JMSXGroupSeq used when dealing with group of messages.

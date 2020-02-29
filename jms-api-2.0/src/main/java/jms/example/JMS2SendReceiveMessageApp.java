@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 
 
 
-public class App {
+public class JMS2SendReceiveMessageApp {
 
     public static void main(String[] args) throws NamingException {
 
