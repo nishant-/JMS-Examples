@@ -27,7 +27,7 @@ public class BytesMessageExample {
             String s = messageReceived.readUTF();
             boolean isTrue = messageReceived.readBoolean();
 
-            System.out.println(s +", " +  isTrue);
+            System.out.println(s +", " + isTrue);
 
         } catch (JMSException e) {
             e.printStackTrace();
